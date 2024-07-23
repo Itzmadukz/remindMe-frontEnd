@@ -2,17 +2,19 @@ import Layout from "./Layout"
 import placholderImage from "../assets/placeholder.png"
 import { useEffect, useState } from "react"
 
-function DropBox({ headerRef, setHighlight }) {
+function DropBox({ headerRef, setHighlight, handleSubmit }) {
     const [imageSrc, setImageSrc] = useState({
         placholderImage: placholderImage,
+        rawFile: null,
         error: false
     })
     const [showAskButton, setShowAskButton] = useState(false)
-    const MAX_FILE_SIZE = 6 * 1024 * 1024 // 15 MB in bytes
+    const MAX_FILE_SIZE = 6 * 1024 * 1024 // 6 MB in bytes
 
 
     const handleImageUpload = (event) => {
         const file = event.target.files[0]
+        console.log(file)
         if (file) {
             if (file.size > MAX_FILE_SIZE) {
                 setImageSrc(prevState => ({
@@ -26,6 +28,7 @@ function DropBox({ headerRef, setHighlight }) {
                 setImageSrc(prevState => ({
                     ...prevState,
                     placholderImage: reader.result,
+                    rawFile: file,
                     error: false
                 }))
             }
@@ -33,14 +36,6 @@ function DropBox({ headerRef, setHighlight }) {
             setShowAskButton(true)
             console.log(reader)
         }
-    }
-
-    const handleSubmit = (event) => {
-        // event.preventDefault()
-        // const formData = new FormData()
-        // formData.append('imageSrc', imageSrc)
-        headerRef.current.scrollIntoView({ behavior: 'smooth' });
-        setHighlight(true)
     }
 
 
@@ -70,7 +65,7 @@ function DropBox({ headerRef, setHighlight }) {
                     </div>
                 </div>
                 {showAskButton && <div className="flex justify-center mb-8">
-                    <button onClick={handleSubmit} className="w-1/4 bg-blue-200">🤔 Ask</button>
+                    <button onClick={(event) => { handleSubmit(event,imageSrc) }} className="w-1/4 bg-blue-200">🤔 Ask</button>
                 </div>
                 }
 
